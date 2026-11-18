@@ -111,7 +111,7 @@ toggleQrButton.addEventListener("click", function () {
 
 function cleanSpeechText(text) {
   return String(text || "")
-    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<br\s*\/?\s*>/gi, " ")
     .replace(/<\/?[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -292,16 +292,30 @@ function seqRange(input) {
 }
 
 function lookupText(txt) {
+  const queryWords = String(txt || "").toLocaleLowerCase().match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) || [];
+  if (queryWords.length === 0) return [];
+
   const numScripts = [];
-  const escapedText = txt.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re = new RegExp(`\\b${escapedText}\\b`, "i");
   for (const [i, sentence] of Sentences.entries()) {
-    if (re.test(sentence.english || "")) {
-      numScripts.push(i);
-    }
+    // Playlist word searches should only include clips with an actual audio file.
+    if (typeof sentence.audio !== "string" || !sentence.audio.trim()) continue;
+
+    const searchableText = `${sentence.english || ""} ${sentence.keyWord || ""} ${sentence.audio || ""}`;
+    const sentenceWords = searchableText.toLocaleLowerCase().match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) || [];
+    const containsQuery = queryWords.every((word, queryIndex) => {
+      // Match the complete word or phrase, rather than a partial word (cat won't match catch).
+      for (let start = 0; start <= sentenceWords.length - queryWords.length; start++) {
+        if (sentenceWords[start + queryIndex] !== word) continue;
+        if (queryIndex === queryWords.length - 1) return true;
+      }
+      return false;
+    });
+
+    if (containsQuery) numScripts.push(i);
   }
+
   if (numScripts.length === 0) {
-    alert("There aren't any scripts that contain this keyword ");
+    alert("There aren't any audio clips that contain this keyword.");
     return "alert";
   }
   return numScripts;
@@ -353,7 +367,11 @@ function parsePlayListInput(text) {
 
 function enablePlaylistMode() {
   const indices = parsePlayListInput(playList.value);
-  if (!indices || indices === "alert" || indices.length === 0) {
+  if (indices === "alert") {
+    usePlayListCheckbox.checked = false;
+    return;
+  }
+  if (!indices || indices.length === 0) {
     usePlayListCheckbox.checked = false;
     alert("Playlist is empty or invalid. Enter numbers like: 1, 3, 5");
     return;
@@ -372,6 +390,8 @@ function disablePlaylistMode() {
 
 usePlayListCheckbox.addEventListener("change", function () {
   if (usePlayListCheckbox.checked) {
+    const selectedText = window.getSelection ? window.getSelection().toString().trim() : "";
+    if (selectedText) playList.value = selectedText;
     enablePlaylistMode();
   } else {
     disablePlaylistMode();
@@ -382,6 +402,11 @@ playList.addEventListener("keydown", function (e) {
   if (e.key === "Enter" && usePlayListCheckbox.checked) {
     enablePlaylistMode();
   }
+});
+
+// Refresh the filtered playlist as the search term is edited while playlist mode is on.
+playList.addEventListener("input", function () {
+  if (usePlayListCheckbox.checked) enablePlaylistMode();
 });
 
 speakEnglishBtn.addEventListener("click", function () {
