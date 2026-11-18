@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+        figure {
+            text-align: center;
+            margin-top: 20px;
+        }
+        audio {
+            margin-top: 10px;
+        }
+        .info {
+            margin-top: 20px;
+            text-align: center;
+        }
+        table {
+            text-align: center;
+        }
+        table th, td {
+            padding: 5px;
+        }
+        #scriptText {
+            text-align: left;
+            padding: 10px;
+        }
+        #audioCaption {
+            display: none;
+        }
+        h1, h2, h3 {
+            color: blue;
+        }
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #eaeaea;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <details>
+            <summary>General Information</summary>
+            <table border="1">
+                <thead>
+                    <th>Teacher’s ELSD ID</th>
+                    <th>Teacher’s Name</th>
+                    <th>Section No.</th>
+                    <th>Course ID</th>
+                    <th>Building</th>
+                    <th>Classroom No</th>
+                    <th>Textbook</th>
+                    <th>Strand</th>
+                    <th>Category</th>
+                    <th>Time class begins:</th>
+                    <th>Time class finishes:</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>M203966</td>
+                        <td>Eltayeb Mohamed</td>
+                        <td>66740</td>
+                        <td>101</td>
+                        <td>Science</td>
+                        <td>G201</td>
+                        <td>Q SKILLS INTRO</td>
+                        <td>Listening & Speaking</td>
+                        <td>A</td>
+                        <td>9:00-10:35</td>
+                        <td>10:35-11:50</td>
+                    </tr>
+                </tbody>
+            </table>
+        </details>
+    </div>
+
+    <h1>Unit 1 Question: What are you interested in?</h1>
+    <h2>Page 61 - Activity A</h2>
+    <h3>Listen and Replace the tone with the correct word.</h3>
+    <h1>Objectives</h1>
+
+    <div>
+        <p>By the end of the lesson the students will be able to:</p>
+        <ol>
+            <li>demonstrate comprehension of excerpts from the audio on page 61.</li>
+            <li>
+                <p>
+                    demonstrate comprehension of key words in the audio such as<br>
+                    tradition, scene, modern, in nature, crowded, provide, outdoors
+                </p>
+            </li>
+        </ol>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Activity</th>
+                    <th>Type of Interaction</th>
+                    <th>Assessment</th>
+                    <th>Feedback</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>Ss listen to the audio excerpts.<br>Ss demonstrate comprehension of the audio.</p>
+                    </td>
+                    <td>T-Ss</td>
+                    <td>Ss are assessed based on the ability to choose the correct word to complete the sentence.</td>
+                    <td>
+                        <p>Self-Correction<br>Peer Correction<br>Elicit, use ICQs & CCQs</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Elicit or teach antonyms for the words:<br>modern, outdoors, crowded, relaxing</p>
+                    </td>
+                    <td>T-Ss<br>Ss-Ss</td>
+                    <td>
+                        <p>Ss are assessed based on the ability to identify the antonyms:<br>stressful, indoors, old, not crowded?<br>Ss answer the questions: Which is antonym of outdoors, relaxing, etc.?</p>
+                    </td>
+                    <td>
+                        <p>Self-Correction<br>Peer Correction<br>Elicit, use ICQs & CCQs</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <figure>
+        <audio id="audioPlayer" controls>
+            <source id="audioSource" src="" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <figcaption id="audioCaption">Audio File Name</figcaption>
+    </figure>
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+
+    <div class="info">
+        <details>
+            <summary>Show Audio Script</summary>
+            <p id="scriptText">Script will be displayed here.</p>
+        </details>
+        <p id="questionText">Question will be displayed here.</p>
+        <p id="answerText">Answer will be displayed here.</p>
+    </div>
+
+    <script>
+        const audioFiles = [
+            { fileName: `tradition.mp3`, script: `tradition` },
+            { fileName: `provide.mp3`, script: `provide` },
+            { fileName: `relaxing.mp3`, script: `relaxing` },
+            { fileName: `relaxing2.mp3`, script: `relaxing` },
+            { fileName: `outdoors.mp3`, script: `outdoors` },
+            { fileName: `in nature modern.mp3`, script: `in nature modern.` },
+            { fileName: `crowded anxious.mp3`, script: `crowded anxious.` },
+            { fileName: `scence.mp3`, script: `scene.` },
+            { fileName: `listen and choose the words that complete the sentence.mp3`, script: `listen and choose the words that complete the sentence.` },
+            { fileName: `provide crowded modern.mp3`, script: `provide crowded modern` },
+            { fileName: `i don't like modern cars i like older ones.mp3`, script: `i don't like modern cars i like older ones` },
+            { fileName: `crowded relaxing modern.mp3`, script: `crowded relaxing modern` },
+            { fileName: `i like to sit by the lake in the evening it is very relaxing.mp3`, script: `i like to sit by the lake in the evening it is very relaxing.` },
+            { fileName: `there are a lot of people here it is very crowded.mp3`, script: `There are a lot of people here. It is very crowded.` },
+            { fileName: `some companies provide free meals for their wprkers.mp3`, script: `Some companies provide free meals for their workers.` },
+            { fileName: `tradition in nature scene.mp3`, script: `tradition in nature scene` },
+            { fileName: `mary likes to be in nature she loves trees and flowers.mp3`, script: `Mary likes to be in nature. She loves trees and flowers.` },
+            { fileName: `the police came to the scene of the accident.mp3`, script: `the police came to the scene of the accident.` },
+            { fileName: `picking apples in the fall is a family tradition.mp3`, script: `picking apples in the fall is a family tradition.` },
+        ];
+
+        let currentIndex = 0;
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioSource = document.getElementById('audioSource');
+        const audioCaption = document.getElementById('audioCaption');
+        const scriptText = document.getElementById('scriptText');
+        const questionText = document.getElementById('questionText');
+        const answerText = document.getElementById('answerText');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateButtonStates() {
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === audioFiles.length - 1;
+        }
+
+        function loadAudio(index) {
+            const audioData = audioFiles[index];
+            audioSource.src = audioData.fileName;
+            audioCaption.textContent = audioData.fileName.split('/').pop();
+            scriptText.innerHTML = audioData.script;
+            questionText.textContent = audioData.question || ''; // Update question text
+            answerText.textContent = audioData.answer || ''; // Update answer text
+            audioPlayer.load();
+            audioPlayer.play();
+            updateButtonStates();
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                loadAudio(currentIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < audioFiles.length - 1) {
+                currentIndex++;
+                loadAudio(currentIndex);
+            }
+        });
+
+        loadAudio(currentIndex);
+        updateButtonStates();
+    </script>
+    <footer>
+        <p>&copy; 2025 Eltayeb Mohamed. All rights reserved.</p>
+    </footer>
+</body>
+</html>
