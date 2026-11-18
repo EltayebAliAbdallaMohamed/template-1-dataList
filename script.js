@@ -28,6 +28,7 @@ const questionBasedOnAudio = document.getElementById("questionBasedOnAudio");
 const audioIndexInput = document.getElementById("audioIndex");
 const autoPlayCheckbox = document.getElementById("autoPlay");
 const playList = document.getElementById("playList");
+const wordSuggestions = document.getElementById("wordSuggestions");
 const usePlayListCheckbox = document.getElementById("usePlayList");
 const definitionDetails = document.getElementById("definition");
 const englishDetails = document.getElementById("englishDetails");
@@ -52,6 +53,27 @@ function displayLessonDetails(details = {}) {
   document.getElementById("lessonEstimatedTime").textContent = details.estimatedTime || "";
   document.getElementById("lessonAssessment").textContent = details.assessment || "";
   document.getElementById("lessonSummaryFeedback").textContent = details.summaryFeedback || "";
+}
+
+// Build suggestions from the currently loaded lesson; the input remains free-form.
+function updateWordSuggestions(sentences) {
+  const words = new Set();
+  for (const sentence of sentences) {
+    const source = `${sentence.english || ""} ${sentence.keyWord || ""}`;
+    for (const word of source.match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) || []) {
+      if (/\p{L}/u.test(word)) words.add(word);
+    }
+  }
+
+  wordSuggestions.replaceChildren(
+    ...Array.from(words)
+      .sort((a, b) => a.localeCompare(b))
+      .map((word) => {
+        const option = document.createElement("option");
+        option.value = word;
+        return option;
+      })
+  );
 }
 
 toggleQrButton.addEventListener("click", function () {
@@ -161,6 +183,7 @@ async function loadData(fileName) {
     if (!Array.isArray(Sentences)) {
       throw new Error("JSON does not contain `sentences` as an array.");
     }
+    updateWordSuggestions(Sentences);
     buildDefaultNav();
     displayData();
   } catch (error) {
@@ -270,9 +293,10 @@ function seqRange(input) {
 
 function lookupText(txt) {
   const numScripts = [];
-  const re = new RegExp(`\\b${txt}\\b`);
+  const escapedText = txt.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`\\b${escapedText}\\b`, "i");
   for (const [i, sentence] of Sentences.entries()) {
-    if (re.test(sentence.english.toLowerCase())) {
+    if (re.test(sentence.english || "")) {
       numScripts.push(i);
     }
   }

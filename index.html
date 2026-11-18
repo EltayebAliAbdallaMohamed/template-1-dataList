@@ -92,7 +92,8 @@
         <p id="q" aria-live="polite"></p>
         <p id="keyWords" aria-label="Keywords"></p>
         <audio id="audio" controls aria-label="Audio player">Your browser does not support the audio element.</audio>
-        <input type="text" id="playList" inputmode="text" placeholder="Enter a word or numbers such as 1,2,3 or 5-10">
+        <input type="text" id="playList" list="wordSuggestions" inputmode="text" placeholder="Enter a word or numbers such as 1,2,3 or 5-10" aria-label="Search for a word or enter clip numbers">
+        <datalist id="wordSuggestions"></datalist>
         <label class="checkbox-row"><input type="checkbox" id="usePlayList">Use playlist</label>
         <div class="controls" role="group" aria-label="Navigation controls">
           <input type="number" id="audioIndex" inputmode="numeric" min="1" placeholder="#" aria-label="Enter clip number">
