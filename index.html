@@ -61,10 +61,9 @@
     <div id="fileSelector" class="file-selector">
       <label for="jsonFileSelect"><strong>Select Lesson File:</strong></label>
       <select id="jsonFileSelect" aria-label="Select a JSON lesson file">
-        <option value="">-- Choose a lesson --</option>        
+        <option value="">-- Choose a lesson --</option>
         <option value="data_1.json">page 61 - Part 1 </option>
         <option value="data_2.json">page 61 - Part 2 </option>
-
       </select>
     </div>
 
@@ -134,5 +133,31 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="script.js"></script>
+  <script>
+    // Search transcript/keyword text for every term, regardless of word order.
+    // Keep this after script.js so playlist searches use this implementation.
+    window.lookupText = function (text) {
+      const tokenize = (value) => String(value || "")
+        .normalize("NFKC")
+        .replace(/[‘’]/g, "'")
+        .toLocaleLowerCase()
+        .match(/[\p{L}\p{N}]+(?:'[\p{L}\p{N}]+)*/gu) || [];
+      const queryWords = tokenize(text);
+      if (queryWords.length === 0) return [];
+
+      const matches = [];
+      for (const [index, sentence] of Sentences.entries()) {
+        if (typeof sentence.audio !== "string" || !sentence.audio.trim()) continue;
+        const transcriptWords = new Set(tokenize(`${sentence.english || ""} ${sentence.keyWord || ""}`));
+        if (queryWords.every((word) => transcriptWords.has(word))) matches.push(index);
+      }
+
+      if (matches.length === 0) {
+        alert("There aren't any audio clips that contain this keyword.");
+        return "alert";
+      }
+      return matches;
+    };
+  </script>
 </body>
 </html>
